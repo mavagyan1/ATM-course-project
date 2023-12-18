@@ -3,6 +3,7 @@
 #include "clientsocket.hpp"
 #include <iostream>
 #include <memory>
+#include <limits>
 #include "commandRegistry.hpp"
 
 ClientApplication::ClientApplication()
@@ -38,7 +39,18 @@ int ClientApplication::runApp() {
 
 int ClientApplication::getInput() const {
     int input;
-    cin >> input;
+    while (true) {
+        std::cout << "Enter a number: ";
+        std::cin >> input;
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Please enter a number." << std::endl;
+        } else {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            break;
+        }
+    }
     return input;
 }
 
@@ -61,7 +73,7 @@ void ClientApplication::runATM() {
         int choice = getInput();
         if(choice == 1 || choice == 2 )
             _mgr.setCredentials();
-
+        
         switch (choice) {   
         case 1 :
             if(_mgr.processRegistration())
